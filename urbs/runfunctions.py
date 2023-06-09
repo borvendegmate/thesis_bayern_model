@@ -21,10 +21,13 @@ def prepare_result_directory(result_name):
     
     """
     # timestamp for result directory
-    now = datetime.now().strftime('%Y%m%dT%H%M')
+    #now = datetime.now().strftime('%Y%m%dT%H%M')
 
     # create result directory if not existent
-    result_dir = os.path.join('result', '{}-{}'.format(result_name, now))
+    #result_dir = os.path.join('myopic/output', '{}-{}'.format(result_name, now))
+
+    result_dir = os.path.join('myopic', 'output')
+
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -56,7 +59,7 @@ def setup_solver(optim, logfile='solver.log'):
 def run_scenario(input_files, Solver, timesteps, scenario, result_dir, dt,
                  objective, plot_tuples=None,  plot_sites_name=None,
                  plot_periods=None, report_tuples=None,
-                 report_sites_name=None):
+                 report_sites_name=None, yr=None):
     """ run an urbs model for given input, time steps and scenario
 
     Args:
@@ -79,6 +82,7 @@ def run_scenario(input_files, Solver, timesteps, scenario, result_dir, dt,
     Returns:
         the urbs model instance
     """
+    output_year = yr
 
     # sets a modeled year for non-intertemporal problems
     # (necessary for consitency)
@@ -106,12 +110,12 @@ def run_scenario(input_files, Solver, timesteps, scenario, result_dir, dt,
     assert str(result.solver.termination_condition) == 'optimal'
 
     # save problem solution (and input data) to HDF5 file
-    save(prob, os.path.join(result_dir, '{}.h5'.format(sce)))
+    save(prob, os.path.join(result_dir, 'output_bayern_{}.h5'.format(output_year)))
 
     # write report to spreadsheet
     report(
         prob,
-        os.path.join(result_dir, '{}.xlsx').format(sce),
+        os.path.join(result_dir, 'output_bayern_{}.xlsx').format(output_year),
         report_tuples=report_tuples,
         report_sites_name=report_sites_name)
 
