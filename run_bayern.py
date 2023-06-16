@@ -99,7 +99,7 @@ for year in years:
 
         # Update 'Global' sheet
         input_file['Global'].at['Support timeframe', 'value'] = year + 5
-        input_file['Global'].at['CO2 limit', 'value'] = timeseries['co2_budget'].at['CO2 budget', year + 5]
+        input_file['Global'].at['CO2 limit', 'value'] = timeseries['co2_budget'].at['CO2 budget', year + 5] * 1e6
 
 
         # Update 'Commodity'
@@ -115,8 +115,13 @@ for year in years:
 
         input_file['Process'] = input_file['Process'].reset_index()
         timeseries['retiring'] = timeseries['retiring'].reset_index()
+        timeseries['capup'] = timeseries['capup'].reset_index()
+        timeseries['capex'] = timeseries['capex'].reset_index()
 
         input_file['Process']['inst-cap'] = timeseries['retiring'][year+5]
+        
+        input_file['Process']['cap-up'] = timeseries['capup'][year+5]
+        input_file['Process']['inv-cost'] = timeseries['capex'][year+5]
 
         input_file['Process'] = input_file['Process'].set_index('Site')
         input_file['Process'].head()
