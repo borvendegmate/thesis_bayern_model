@@ -42,7 +42,7 @@ for year in years:
         (year, 'Bayern', 'Space heating'),
         (year, 'Bayern', 'Process heating A'),
         (year, 'Bayern', 'Process heating B'),
-        (year, 'Bayern', 'Process heating D'),
+        (year, 'Bayern', 'Process heating C'),
         (year, 'Bayern', 'Electric charging'),
         (year, 'Bayern', 'Elec_Rest')
         ]
