@@ -4,16 +4,22 @@ import urbs
 import pandas as pd
 import numpy as np
 
-years = [2020, 2025, 2030, 2035, 2040, 2045, 2050]
+years = [2020, 
+         #2025, 
+         2030, 
+         #2035, 
+         2040,
+         #2045, 
+         2050]
 
-for year in years:
+for idx, year in enumerate(years):
 
     input_files = 'input_bayern_{}.xlsx'.format(year)  # for single year file name, for intertemporal folder name2
     input_dir = 'myopic/input'
     input_path = os.path.join('myopic', 'input', input_files)
 
     result_name = 'output_bayern_{}'.format(year)
-    result_dir = urbs.prepare_result_directory(result_name)  # name + time stamp
+    result_dir = urbs.prepare_result_directory(result_name)
 
     # copy input file to result directory
     try:
@@ -43,8 +49,8 @@ for year in years:
         (year, 'Bayern', 'Process heating A'),
         (year, 'Bayern', 'Process heating B'),
         (year, 'Bayern', 'Process heating C'),
-        (year, 'Bayern', 'Electric charging'),
-        (year, 'Bayern', 'Elec_Rest')
+        #(year, 'Bayern', 'Electric charging'),
+        #(year, 'Bayern', 'Elec_Rest')
         ]
 
     # optional: define names for sites in report_tuples
@@ -98,15 +104,15 @@ for year in years:
 
 
         # Update 'Global' sheet
-        input_file['Global'].at['Support timeframe', 'value'] = year + 5
-        input_file['Global'].at['CO2 limit', 'value'] = timeseries['co2_budget'].at['CO2 budget', year + 5] * 1e6
+        input_file['Global'].at['Support timeframe', 'value'] = years[idx+1]
+        input_file['Global'].at['CO2 limit', 'value'] = timeseries['co2_budget'].at['CO2 budget', years[idx+1]] * 1e6
 
 
         # Update 'Commodity'
         input_file['Commodity'] = input_file['Commodity'].reset_index()
         timeseries['prices'] = timeseries['prices'].reset_index()
 
-        input_file['Commodity']['price'] = timeseries['prices'][year+5]
+        input_file['Commodity']['price'] = timeseries['prices'][years[idx+1]]
         input_file['Commodity'] = input_file['Commodity'].set_index('Site')
         input_file['Commodity'].head()
 
@@ -118,10 +124,10 @@ for year in years:
         timeseries['capup'] = timeseries['capup'].reset_index()
         timeseries['capex'] = timeseries['capex'].reset_index()
 
-        input_file['Process']['inst-cap'] = timeseries['retiring'][year+5]
+        input_file['Process']['inst-cap'] = timeseries['retiring'][years[idx+1]]
         
-        input_file['Process']['cap-up'] = timeseries['capup'][year+5]
-        input_file['Process']['inv-cost'] = timeseries['capex'][year+5]
+        input_file['Process']['cap-up'] = timeseries['capup'][years[idx+1]]
+        input_file['Process']['inv-cost'] = timeseries['capex'][years[idx+1]]
 
         input_file['Process'] = input_file['Process'].set_index('Site')
         input_file['Process'].head()
@@ -130,15 +136,15 @@ for year in years:
         # Update 'Demand' sheet
         # only woodcutter approach, will loop through demand type commodities, standarized names in 'timeseries', and catch-try
 
-        input_file['Demand']['Bayern.Space heating'] = timeseries['profiles']['profile_space_heating'] * timeseries['demand'].at['Space heating', year+5] * 1e6
-        input_file['Demand']['Bayern.Process heating A'] = timeseries['profiles']['profile_process_heating'] * timeseries['demand'].at['Process heating A', year+5] * 1e6
-        input_file['Demand']['Bayern.Process heating B'] = timeseries['profiles']['profile_process_heating'] * timeseries['demand'].at['Process heating B', year+5] * 1e6
-        input_file['Demand']['Bayern.Process heating C'] = timeseries['profiles']['profile_process_heating'] * timeseries['demand'].at['Process heating C', year+5] * 1e6
-        input_file['Demand']['Bayern.Electric charging'] = timeseries['profiles']['profile_charging'] * timeseries['demand'].at['Electric charging', year+5] * 1e6
-        input_file['Demand']['Bayern.Elec_Rest'] = timeseries['profiles']['profile_electricity'] * timeseries['demand'].at['Electricity', year+5] * 1e6
+        input_file['Demand']['Bayern.Space heating'] = timeseries['profiles']['profile_space_heating'] * timeseries['demand'].at['Space heating', years[idx+1]] * 1e6
+        input_file['Demand']['Bayern.Process heating A'] = timeseries['profiles']['profile_process_heating'] * timeseries['demand'].at['Process heating A', years[idx+1]] * 1e6
+        input_file['Demand']['Bayern.Process heating B'] = timeseries['profiles']['profile_process_heating'] * timeseries['demand'].at['Process heating B', years[idx+1]] * 1e6
+        input_file['Demand']['Bayern.Process heating C'] = timeseries['profiles']['profile_process_heating'] * timeseries['demand'].at['Process heating C', years[idx+1]] * 1e6
+        input_file['Demand']['Bayern.Electric charging'] = timeseries['profiles']['profile_charging'] * timeseries['demand'].at['Electric charging', years[idx+1]] * 1e6
+        input_file['Demand']['Bayern.Elec_Rest'] = timeseries['profiles']['profile_electricity'] * timeseries['demand'].at['Electricity', years[idx+1]] * 1e6
 
 
         # Write DataFrame dictionary into a 
-        with pd.ExcelWriter(f"myopic/input/input_bayern_{year+5}.xlsx") as writer:
+        with pd.ExcelWriter(f"myopic/input/input_bayern_{years[idx+1]}.xlsx") as writer:
             for sheet in list(input_file.keys()):
                 input_file[sheet].to_excel(writer, sheet_name = sheet)
