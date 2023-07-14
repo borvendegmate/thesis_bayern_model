@@ -5,11 +5,11 @@ import pandas as pd
 import numpy as np
 
 years = [2020, 
-         #2025, 
+         2025, 
          2030, 
-         #2035, 
+         2035, 
          2040,
-         #2045, 
+         2045, 
          2050]
 
 for idx, year in enumerate(years):
