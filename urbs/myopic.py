@@ -97,11 +97,24 @@ def update_process(df, ts, output, next_year):
     for param in ts[ts['Sheet'] == 'Process']['Parameter'].unique():
 
         for idx in ts.loc[(ts['Parameter'] == param)]['ID'].unique():
-
+            
+            # Update parameters based on the update table
             df['Process'].loc[df['Process']['Process'] == idx, param] = float(ts.loc[(ts['Sheet'] == 'Process') & (ts['Parameter'] == param) & (ts['ID'] == idx)][next_year])
             
+            # Add installed capacities from the previous year
             if(param == 'inst-cap'):
                 df['Process'].loc[df['Process']['Process'] == idx, param] += output['cap_pro_new'].unstack()[idx][0]
+
+    # Check for upper and lower capacity limits
+    for idx in ts.loc[(ts['Parameter'] == 'inst-cap')]['ID'].unique():
+
+        # Check upper capacity limits
+        if(df['Process'].loc[df['Process']['Process'] == idx, 'inst-cap'][0] >= df['Process'].loc[df['Process']['Process'] == idx, 'cap-up'][0]):
+            df['Process'].loc[df['Process']['Process'] == idx, 'inst-cap'] = df['Process'].loc[df['Process']['Process'] == idx, 'cap-up']
+
+        # Check lower capacity limits
+        if(df['Process'].loc[df['Process']['Process'] == idx, 'inst-cap'][0] <= df['Process'].loc[df['Process']['Process'] == idx, 'cap-lo'][0]):
+            df['Process'].loc[df['Process']['Process'] == idx, 'inst-cap'] = df['Process'].loc[df['Process']['Process'] == idx, 'cap-lo']
 
 
 # Update the Storage tab

@@ -1,4 +1,5 @@
 database/*
 myopic/output/*
 myopic/archive/*
+myopic/scenarios/*
 dev/*
