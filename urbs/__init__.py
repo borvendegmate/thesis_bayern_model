@@ -22,3 +22,5 @@ from .runfunctions import *
 from .saveload import load, save
 from .scenarios import *
 from .identify import identify_mode, identify_expansion
+from .comp import *
+from .myopic import *

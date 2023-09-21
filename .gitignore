@@ -1,2 +1,5 @@
 database/*
-result/*
+myopic/output/*
+myopic/archive/*
+myopic/scenarios/*
+dev/*
