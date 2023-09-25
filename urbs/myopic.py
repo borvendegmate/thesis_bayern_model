@@ -103,6 +103,7 @@ def update_process(df, ts, output, next_year):
             
             # Add installed capacities from the previous year
             if(param == 'inst-cap'):
+                print("Update process caps")
                 df['Process'].loc[df['Process']['Process'] == idx, param] += output['cap_pro_new'].unstack()[idx][0]
 
     # Check for upper and lower capacity limits
@@ -129,11 +130,22 @@ def update_storage(df, ts, output, next_year):
             
             # Add installed capacities from the previous year
             if(param == 'inst-cap-c'):
-                df['Storage'].loc[df['Storage']['Storage'] == idx, param] += output['cap_sto_c_new'].unstack().loc[output['cap_sto_c_new'].unstack().index.get_level_values('sto') == idx, :].max().max()
+                print("Update storage caps c")
+                df['Storage'].loc[df['Storage']['Storage'] == idx, param] += output['cap_sto_c'].unstack().loc[output['cap_sto_c'].unstack().index.get_level_values('sto') == idx, :].max().max()
 
             # Add installed capacities from the previous year
             if(param == 'inst-cap-p'):
-                df['Storage'].loc[df['Storage']['Storage'] == idx, param] += output['cap_sto_p_new'].unstack().loc[output['cap_sto_p_new'].unstack().index.get_level_values('sto') == idx, :].max().max()
+                print("Update storage caps p")
+                df['Storage'].loc[df['Storage']['Storage'] == idx, param] += output['cap_sto_p'].unstack().loc[output['cap_sto_p'].unstack().index.get_level_values('sto') == idx, :].max().max()
+
+            # Check upper capacity limits
+            if(df['Storage'].loc[df['Storage']['Storage'] == idx, 'inst-cap-p'][0] >= df['Storage'].loc[df['Storage']['Storage'] == idx, 'cap-up-p'][0]):
+                df['Storage'].loc[df['Storage']['Storage'] == idx, 'inst-cap-p'] = df['Storage'].loc[df['Storage']['Storage'] == idx, 'cap-up-p']
+
+            # Check upper capacity limits
+            if(df['Storage'].loc[df['Storage']['Storage'] == idx, 'inst-cap-c'][0] >= df['Storage'].loc[df['Storage']['Storage'] == idx, 'cap-up-c'][0]):
+                df['Storage'].loc[df['Storage']['Storage'] == idx, 'inst-cap-c'] = df['Storage'].loc[df['Storage']['Storage'] == idx, 'cap-up-c']
+
 
 # Write output file to Excel
 def write_excel(next_year_dict, next_year):
